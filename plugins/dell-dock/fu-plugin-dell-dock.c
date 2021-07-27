@@ -129,11 +129,22 @@ fu_plugin_backend_device_added (FuPlugin *plugin,
 	/* GR controller internal USB HUB */
 	if ((guint) fu_usb_device_get_vid (FU_USB_DEVICE (device)) == GR_USB_VID &&
 	    (guint) fu_usb_device_get_pid (FU_USB_DEVICE (device)) == GR_USB_PID) {
+		GPtrArray *devices = fu_plugin_get_devices(plugin);
 		g_autoptr(FuDellDockUsb4) usb4_dev = NULL;
+
 		usb4_dev = fu_dell_dock_usb4_new (FU_USB_DEVICE (device));
 		locker = fu_device_locker_new (FU_DEVICE (usb4_dev), error);
 		if (locker == NULL)
 			return FALSE;
+
+		/* steal needs_activation if EC has pending update */
+		for (guint i = 0; i < devices->len; i++) {
+			FuDevice *device_tmp = g_ptr_array_index(devices, i);
+			if (FU_IS_DELL_DOCK_EC(device_tmp)) {
+				fu_dell_dock_steal_activation(FU_DEVICE(device_tmp),
+							      FU_DEVICE(usb4_dev));
+			}
+		}
 		fu_plugin_device_add (plugin, FU_DEVICE (usb4_dev));
 		return TRUE;
 	}

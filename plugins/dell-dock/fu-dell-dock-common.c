@@ -74,3 +74,12 @@ fu_dell_dock_clone_updatable (FuDevice *device)
 		fu_device_remove_flag (device, FWUPD_DEVICE_FLAG_UPDATABLE);
 	}
 }
+
+void
+fu_dell_dock_steal_activation(FuDevice *device_src, FuDevice *device_dst)
+{
+	if (fu_device_has_flag(device_src, FWUPD_DEVICE_FLAG_NEEDS_ACTIVATION)) {
+		fu_device_remove_flag(device_src, FWUPD_DEVICE_FLAG_NEEDS_ACTIVATION);
+		fu_device_add_flag(device_dst, FWUPD_DEVICE_FLAG_NEEDS_ACTIVATION);
+	}
+}
