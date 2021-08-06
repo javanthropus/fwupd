@@ -10,6 +10,7 @@
 #include <xmlb.h>
 
 #include "fu-device.h"
+#include "fu-progress.h"
 
 #define FU_TYPE_TASK (fu_install_task_get_type ())
 G_DECLARE_FINAL_TYPE (FuInstallTask, fu_install_task, FU, INSTALL_TASK, GObject)
@@ -18,6 +19,10 @@ FuInstallTask	*fu_install_task_new			(FuDevice	*device,
 							 XbNode		*component);
 FuDevice	*fu_install_task_get_device		(FuInstallTask	*self);
 XbNode		*fu_install_task_get_component		(FuInstallTask	*self);
+FuProgress *
+fu_install_task_get_progress(FuInstallTask *self);
+void
+fu_install_task_set_progress(FuInstallTask *self, FuProgress *progress);
 FwupdReleaseFlags fu_install_task_get_trust_flags	(FuInstallTask	*self);
 gboolean	 fu_install_task_get_is_downgrade	(FuInstallTask	*self);
 gboolean	 fu_install_task_check_requirements	(FuInstallTask	*self,

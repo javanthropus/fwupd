@@ -150,12 +150,14 @@ gboolean	 fu_engine_install			(FuEngine	*self,
 							 FwupdInstallFlags flags,
 							 FwupdFeatureFlags feature_flags,
 							 GError		**error);
-gboolean	 fu_engine_install_blob			(FuEngine	*self,
-							 FuDevice	*device,
-							 GBytes		*blob_fw,
-							 FwupdInstallFlags flags,
-							 FwupdFeatureFlags feature_flags,
-							 GError		**error);
+gboolean
+fu_engine_install_blob(FuEngine *self,
+		       FuDevice *device,
+		       GBytes *blob_fw,
+		       FuProgress *progress,
+		       FwupdInstallFlags flags,
+		       FwupdFeatureFlags feature_flags,
+		       GError **error);
 gboolean	 fu_engine_install_tasks		(FuEngine	*self,
 							 FuEngineRequest *request,
 							 GPtrArray	*install_tasks,

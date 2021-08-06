@@ -283,7 +283,9 @@ fu_mbim_qdu_updater_file_write_ready (MbimDevice *device, GAsyncResult *res, gpo
 		return;
 	}
 
-	fu_device_set_progress_full (FU_DEVICE (ctx->device), (gsize) ctx->chunk_sent, (gsize) ctx->chunks->len);
+	fu_progress_set_percentage_full(FU_DEVICE(ctx->device),
+					(gsize)ctx->chunk_sent,
+					(gsize)ctx->chunks->len);
 	ctx->chunk_sent++;
 	if (ctx->chunk_sent < ctx->chunks->len) {
 		FuChunk *chk = g_ptr_array_index (ctx->chunks, ctx->chunk_sent);
@@ -298,7 +300,7 @@ fu_mbim_qdu_updater_file_write_ready (MbimDevice *device, GAsyncResult *res, gpo
 		return;
 	}
 
-	fu_device_set_progress (FU_DEVICE (ctx->device), 100);
+	fu_progress_set_percentage(FU_DEVICE(ctx->device), 100);
 	fu_device_set_status (FU_DEVICE (ctx->device), FWUPD_STATUS_DEVICE_RESTART);
 	/* device will auto reboot right after update finish */
 	g_timeout_add_seconds (10, fu_mbim_qdu_updater_reboot_timeout, ctx);

@@ -21,6 +21,7 @@ struct _FuInstallTask
 	GObject			 parent_instance;
 	FuDevice		*device;
 	XbNode			*component;
+	FuProgress *progress;
 	FwupdReleaseFlags		 trust_flags;
 	gboolean		 is_downgrade;
 };
@@ -55,6 +56,35 @@ fu_install_task_get_component (FuInstallTask *self)
 {
 	g_return_val_if_fail (FU_IS_INSTALL_TASK (self), NULL);
 	return self->component;
+}
+
+/**
+ * fu_install_task_get_progress:
+ * @self: a #FuInstallTask
+ *
+ * Gets the progress object to use for this task.
+ *
+ * Returns: (transfer none): the section
+ **/
+FuProgress *
+fu_install_task_get_progress(FuInstallTask *self)
+{
+	g_return_val_if_fail(FU_IS_INSTALL_TASK(self), NULL);
+	return self->progress;
+}
+
+/**
+ * fu_install_task_set_progress:
+ * @self: a #FuInstallTask
+ * @section: a #FuProgress
+ *
+ * Sets the progress object to use for this task.
+ **/
+void
+fu_install_task_set_progress(FuInstallTask *self, FuProgress *progress)
+{
+	g_return_if_fail(FU_IS_INSTALL_TASK(self));
+	g_set_object(&self->progress, progress);
 }
 
 /**
@@ -476,6 +506,7 @@ static void
 fu_install_task_init (FuInstallTask *self)
 {
 	self->trust_flags = FWUPD_TRUST_FLAG_NONE;
+	self->progress = fu_progress_new();
 }
 
 static void
@@ -487,6 +518,8 @@ fu_install_task_finalize (GObject *object)
 		g_object_unref (self->component);
 	if (self->device != NULL)
 		g_object_unref (self->device);
+	if (self->progress != NULL)
+		g_object_unref(self->progress);
 
 	G_OBJECT_CLASS (fu_install_task_parent_class)->finalize (object);
 }

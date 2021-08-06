@@ -2870,6 +2870,7 @@ fu_plugin_module_func (gconstpointer user_data)
 	g_autoptr(GBytes) blob_cab = NULL;
 	g_autoptr(GMappedFile) mapped_file = NULL;
 	g_autoptr(XbSilo) silo_empty = xb_silo_new ();
+	g_autoptr(FuProgress) progress = fu_progress_new();
 
 	/* no metadata in daemon */
 	fu_engine_set_silo (engine, silo_empty);
@@ -2944,10 +2945,13 @@ fu_plugin_module_func (gconstpointer user_data)
 	/* lets do this online */
 	fu_engine_add_device (engine, device);
 	fu_engine_add_plugin (engine, self->plugin);
-	ret = fu_engine_install_blob (engine, device, blob_cab,
-				      FWUPD_INSTALL_FLAG_NONE,
-				      FWUPD_FEATURE_FLAG_NONE,
-				      &error);
+	ret = fu_engine_install_blob(engine,
+				     device,
+				     blob_cab,
+				     progress,
+				     FWUPD_INSTALL_FLAG_NONE,
+				     FWUPD_FEATURE_FLAG_NONE,
+				     &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpint (cnt, ==, 4);

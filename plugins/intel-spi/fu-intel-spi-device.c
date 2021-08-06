@@ -430,7 +430,7 @@ fu_intel_spi_device_dump (FuIntelSpiDevice *self,
 		}
 
 		/* progress */
-		fu_device_set_progress_full (device, addr - offset + block_len, length);
+		fu_progress_set_percentage_full(progress, addr - offset + block_len, length);
 	}
 
 	/* success */
@@ -438,7 +438,7 @@ fu_intel_spi_device_dump (FuIntelSpiDevice *self,
 }
 
 static GBytes *
-fu_intel_spi_device_dump_firmware (FuDevice *device, GError **error)
+fu_intel_spi_device_dump_firmware(FuDevice *device, FuProgress *progress, GError **error)
 {
 	FuIntelSpiDevice *self = FU_INTEL_SPI_DEVICE (device);
 	guint64 total_size = fu_device_get_firmware_size_max (device);

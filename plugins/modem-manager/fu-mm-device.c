@@ -1150,8 +1150,10 @@ fu_mm_device_firehose_write (FuMmDevice *self, XbSilo *rawprogram_silo,
 	if (locker == NULL)
 		return FALSE;
 
-	progress_signal_id = g_signal_connect_swapped (self->firehose_updater, "write-percentage",
-						       G_CALLBACK (fu_device_set_progress), self);
+	progress_signal_id = g_signal_connect_swapped(self->firehose_updater,
+						      "write-percentage",
+						      G_CALLBACK(fu_progress_set_percentage),
+						      self);
 
 	write_result = fu_firehose_updater_write (self->firehose_updater,
 						  rawprogram_silo,
@@ -1297,10 +1299,11 @@ fu_mm_device_write_firmware_firehose (FuDevice *device, GBytes *fw, GError **err
 #endif /* MM_CHECK_VERSION(1,17,2) */
 
 static gboolean
-fu_mm_device_write_firmware (FuDevice *device,
-			     FuFirmware *firmware,
-			     FwupdInstallFlags flags,
-			     GError **error)
+fu_mm_device_write_firmware(FuDevice *device,
+			    FuFirmware *firmware,
+			    FuProgress *progress,
+			    FwupdInstallFlags flags,
+			    GError **error)
 {
 	FuMmDevice *self = FU_MM_DEVICE (device);
 	g_autoptr(FuDeviceLocker) locker = NULL;
