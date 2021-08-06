@@ -22,6 +22,7 @@ meson .. \
     -Dplugin_redfish=false \
     -Dplugin_altos=false \
     -Dplugin_dell=false \
+    -Dplugin_logitech_bulkcontroller=false \
     -Dplugin_nvme=false \
     -Dplugin_parade_lspcon=false \
     -Dplugin_realtek_mst=false \
