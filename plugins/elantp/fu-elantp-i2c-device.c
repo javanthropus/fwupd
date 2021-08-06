@@ -427,7 +427,6 @@ fu_elantp_i2c_device_write_firmware(FuDevice *device,
 	}
 
 	/* wait for a reset */
-	fu_progress_set_percentage(progress, 0);
 	fu_device_set_status (device, FWUPD_STATUS_DEVICE_RESTART);
 	g_usleep (ELANTP_DELAY_COMPLETE * 1000);
 	return TRUE;

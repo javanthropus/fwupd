@@ -189,7 +189,6 @@ fu_dfu_target_stm_upload_element(FuDfuTarget *target,
 	}
 
 	/* done */
-	fu_progress_set_percentage(progress, 100);
 	fu_dfu_target_set_action (target, FWUPD_STATUS_IDLE);
 
 	/* create new image */
@@ -248,6 +247,7 @@ fu_dfu_target_stm_download_element(FuDfuTarget *target,
 {
 	FuDfuDevice *device = fu_dfu_target_get_device (target);
 	FuDfuSector *sector;
+	FuProgress *progress_local;
 	guint nr_chunks;
 	guint zone_last = G_MAXUINT;
 	guint16 transfer_size = fu_dfu_device_get_transfer_size (device);
@@ -266,6 +266,13 @@ fu_dfu_target_stm_download_element(FuDfuTarget *target,
 				     "zero-length firmware");
 		return FALSE;
 	}
+
+	/* progress */
+	fu_progress_set_custom_steps(progress,
+				     1 /* 1st pass */,
+				     10 /* 2nd pass */,
+				     89 /* 3rd pass */,
+				     -1);
 
 	/* 1st pass: work out which sectors need erasing */
 	sectors_array = g_ptr_array_new ();
@@ -309,9 +316,11 @@ fu_dfu_target_stm_download_element(FuDfuTarget *target,
 			offset_dev += fu_dfu_sector_get_size (sector);
 		}
 	}
+	fu_progress_step_done(progress);
 
 	/* 2nd pass: actually erase sectors */
 	fu_dfu_target_set_action (target, FWUPD_STATUS_DEVICE_ERASE);
+	progress_local = fu_progress_get_division(progress);
 	for (guint i = 0; i < sectors_array->len; i++) {
 		sector = g_ptr_array_index (sectors_array, i);
 		g_debug ("erasing sector at 0x%04x",
@@ -320,13 +329,13 @@ fu_dfu_target_stm_download_element(FuDfuTarget *target,
 						      fu_dfu_sector_get_address (sector),
 						      error))
 			return FALSE;
-		fu_progress_set_percentage_full(progress, i + 1, sectors_array->len);
+		fu_progress_set_percentage_full(progress_local, i + 1, sectors_array->len);
 	}
-	fu_progress_set_percentage(progress, 100);
-	fu_dfu_target_set_action (target, FWUPD_STATUS_IDLE);
+	fu_progress_step_done(progress);
 
 	/* 3rd pass: write data */
 	fu_dfu_target_set_action (target, FWUPD_STATUS_DEVICE_WRITE);
+	progress_local = fu_progress_get_division(progress);
 	for (guint i = 0; i < nr_chunks; i++) {
 		gsize length;
 		guint32 offset;
@@ -377,11 +386,11 @@ fu_dfu_target_stm_download_element(FuDfuTarget *target,
 			return FALSE;
 
 		/* update UI */
-		fu_progress_set_percentage_full(progress, offset, g_bytes_get_size(bytes));
+		fu_progress_set_percentage_full(progress_local, offset, g_bytes_get_size(bytes));
 	}
 
 	/* done */
-	fu_progress_set_percentage(progress, 100);
+	fu_progress_step_done(progress);
 	fu_dfu_target_set_action (target, FWUPD_STATUS_IDLE);
 
 	/* success */

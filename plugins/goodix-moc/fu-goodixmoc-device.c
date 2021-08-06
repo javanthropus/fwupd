@@ -403,7 +403,7 @@ fu_goodixmoc_device_write_firmware(FuDevice *device,
 		}
 
 		/* update progress */
-		fu_progress_set_percentage_full(progress, (gsize)i, (gsize)chunks->len);
+		fu_progress_set_percentage_full(progress, (gsize)i + 1, (gsize)chunks->len);
 	}
 
 	/* success! */

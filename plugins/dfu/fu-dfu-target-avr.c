@@ -602,7 +602,6 @@ fu_dfu_target_avr_download_element(FuDfuTarget *target,
 	}
 
 	/* done */
-	fu_progress_set_percentage(progress, 100);
 	fu_dfu_target_set_action (target, FWUPD_STATUS_IDLE);
 	return TRUE;
 }

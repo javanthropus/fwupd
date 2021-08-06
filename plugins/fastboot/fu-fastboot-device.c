@@ -296,7 +296,7 @@ fu_fastboot_device_download(FuDevice *device, GBytes *fw, FuProgress *progress, 
 					       fu_chunk_get_data_sz (chk),
 					       error))
 			return FALSE;
-		fu_progress_set_percentage_full(progress, (gsize)i, (gsize)chunks->len * 2);
+		fu_progress_set_percentage_full(progress, (gsize)i + 1, (gsize)chunks->len);
 	}
 	if (!fu_fastboot_device_read (device, NULL,
 				      FU_FASTBOOT_DEVICE_READ_FLAG_STATUS_POLL, error))
@@ -563,10 +563,16 @@ fu_fastboot_device_write_motorola(FuDevice *device,
 	parts = xb_silo_query (silo, "parts/part", 0, error);
 	if (parts == NULL)
 		return FALSE;
+	fu_progress_set_steps(progress, parts->len);
 	for (guint i = 0; i < parts->len; i++) {
 		XbNode *part = g_ptr_array_index (parts, i);
-		if (!fu_fastboot_device_write_motorola_part(device, archive, part, progress, error))
+		if (!fu_fastboot_device_write_motorola_part(device,
+							    archive,
+							    part,
+							    fu_progress_get_division(progress),
+							    error))
 			return FALSE;
+		fu_progress_step_done(progress);
 	}
 
 	/* success */
@@ -601,10 +607,16 @@ fu_fastboot_device_write_qfil(FuDevice *device,
 	parts = xb_silo_query (silo, "nandboot/partitions/partition", 0, error);
 	if (parts == NULL)
 		return FALSE;
+	fu_progress_set_steps(progress, parts->len);
 	for (guint i = 0; i < parts->len; i++) {
 		XbNode *part = g_ptr_array_index (parts, i);
-		if (!fu_fastboot_device_write_qfil_part(device, archive, part, progress, error))
+		if (!fu_fastboot_device_write_qfil_part(device,
+							archive,
+							part,
+							fu_progress_get_division(progress),
+							error))
 			return FALSE;
+		fu_progress_step_done(progress);
 	}
 
 	/* success */

@@ -428,6 +428,9 @@ fu_colorhug_device_write_firmware(FuDevice *device,
 	g_autoptr(GBytes) fw = NULL;
 	g_autoptr(GPtrArray) chunks = NULL;
 
+	/* progress */
+	fu_progress_set_custom_steps(progress, 19 /* erase */, 45 /* write */, 36 /* read */, -1);
+
 	/* get default image */
 	fw = fu_firmware_get_bytes (firmware, error);
 	if (fw == NULL)
@@ -443,9 +446,6 @@ fu_colorhug_device_write_firmware(FuDevice *device,
 	fu_device_set_status (device, FWUPD_STATUS_DEVICE_WRITE);
 	if (!fu_colorhug_device_set_flash_success (self, FALSE, error))
 		return FALSE;
-
-	/* progress */
-	fu_progress_set_custom_steps(progress, 19 /* erase */, 45 /* write */, 36 /* read */, -1);
 
 	/* erase flash */
 	if (!fu_colorhug_device_erase (self, self->start_addr, g_bytes_get_size (fw), error))
