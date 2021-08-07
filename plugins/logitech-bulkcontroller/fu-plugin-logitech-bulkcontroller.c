@@ -354,7 +354,7 @@ fu_plugin_write_firmware(FuPlugin *plugin,
 	plugin_data->device_obj = device;
 	/* Preserve current version for later comparison */
 	g_stpcpy(plugin_data->old_version, plugin_data->device_info.sw);
-	g_debug("Updating firmware for %s, current %s, new size = %lu",
+	g_debug("Updating firmware for %s, current %s, new size = %" G_GSIZE_FORMAT,
 		plugin_data->device_info.name,
 		plugin_data->device_info.sw,
 		g_bytes_get_size(blob_fw));
